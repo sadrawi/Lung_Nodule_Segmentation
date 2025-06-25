@@ -1,4 +1,4 @@
-ultralytics==8.0.234
+ultralytics==8.3.158
 streamlit
 Pillow
 opencv-python

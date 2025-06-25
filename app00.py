@@ -10,7 +10,7 @@ import tempfile
 model = YOLO('best_seg_LungNodule.pt')
 
 # Streamlit UI
-st.title("🎯 YOLOv8 Segmentation with Streamlit")
+st.title("Lung Nodule Segmentation")
 
 uploaded_file = st.file_uploader("Upload an Image", 
     type=['png', 'jpg', 'jpeg'])
@@ -36,12 +36,3 @@ if uploaded_file:
             caption="Segmentation Result", 
             use_container_width=True)
 
-        # Optional: show object classes
-        boxes = results.boxes
-        masks = results.masks
-
-        st.write("Detected Classes:", 
-            [model.names[int(cls)] for cls in boxes.cls])
-
-        if masks is not None:
-            st.write(f"Number of masks: {len(masks.data)}")

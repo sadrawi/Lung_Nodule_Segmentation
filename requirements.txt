@@ -1,4 +1,5 @@
+ultralytics==8.0.234
 streamlit
-torch
-torchvision
 Pillow
+opencv-python
+numpy

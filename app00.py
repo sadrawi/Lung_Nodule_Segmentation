@@ -8,6 +8,20 @@ import tempfile
 
 model = YOLO('best_seg_LungNodule.pt')
 
+st.set_page_config(
+    page_title="i3L AI System",
+    layout="wide",
+    initial_sidebar_state="auto"
+)
+
+image = Image.open('i3l_logo.png')
+
+col1, col2 = st.columns([1,3])
+with col1:
+    st.image(image)
+with col2:
+    st.title("i3L AI-based Gram Staining Detection")
+
 # Streamlit UI
 st.title("Lung Nodule Segmentation")
 

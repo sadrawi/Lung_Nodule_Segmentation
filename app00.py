@@ -20,10 +20,10 @@ col1, col2 = st.columns([1,3])
 with col1:
     st.image(image)
 with col2:
-    st.title("i3L AI-based \n Lung Nodule Detection")
+    st.title("i3L AI-based Lung Nodule Segmentation")
 
 # Streamlit UI
-st.title("Lung Nodule Segmentation")
+# st.title("Lung Nodule Segmentation")
 
 uploaded_file = st.file_uploader("Upload an Image", 
     type=['png', 'jpg', 'jpeg'])

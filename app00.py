@@ -34,13 +34,18 @@ if "seg_result" not in st.session_state:
 
 if uploaded_file:
     image2 = Image.open(uploaded_file).convert("RGB")
+    st.session_state.orig_image = np.array(image2)
 
-    # Button to run segmentation
+    # Show original image immediately
+    st.image(image2, caption="Original Image", use_container_width=True)
+
+    # Add space + button
     st.markdown("<hr>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
     with col_btn2:
         run_clicked = st.button("🔍 Run Segmentation", use_container_width=True)
 
+    # If Run Segmentation pressed
     if run_clicked:
         with st.spinner("Running segmentation..."):
             img_np = np.array(image2)
@@ -48,48 +53,31 @@ if uploaded_file:
             seg_img = results.plot()
             seg_img = cv2.cvtColor(seg_img, cv2.COLOR_BGR2RGB)
 
-        # Save results in session state
         st.session_state.seg_result = seg_img
-        st.session_state.orig_image = np.array(image2)
-
         st.success("✅ Segmentation complete! Adjust transparency below.")
 
-    # Display segmentation if available
-    if st.session_state.seg_result is not None:
-        st.markdown("### 🩶 Adjust Segmentation Transparency")
-        alpha = st.slider("Transparency", 0.0, 1.0, 0.5, 0.05)
+# After segmentation, show result and controls
+if st.session_state.seg_result is not None:
+    st.markdown("### 🩶 Adjust Segmentation Transparency")
+    alpha = st.slider("Transparency", 0.0, 1.0, 0.5, 0.05)
 
-        # Blend segmentation overlay
-        blended = cv2.addWeighted(
-            st.session_state.orig_image, 1 - alpha,
-            st.session_state.seg_result, alpha, 0
-        )
+    blended = cv2.addWeighted(
+        st.session_state.orig_image, 1 - alpha,
+        st.session_state.seg_result, alpha, 0
+    )
 
-        # --- Show side-by-side images ---
-        colA, colB = st.columns(2)
-        with colA:
-            st.image(st.session_state.orig_image, caption="Original Image", use_container_width=True)
-        with colB:
-            st.image(blended, caption=f"Segmentation Overlay (α={alpha:.2f})", use_container_width=True)
+    st.image(blended, caption=f"Segmentation Result (α={alpha:.2f})", use_container_width=True)
 
-        # --- Create side-by-side image for download ---
-        h = min(st.session_state.orig_image.shape[0], blended.shape[0])
-        orig_resized = cv2.resize(st.session_state.orig_image, (int(st.session_state.orig_image.shape[1] * h / st.session_state.orig_image.shape[0]), h))
-        blended_resized = cv2.resize(blended, (int(blended.shape[1] * h / blended.shape[0]), h))
-        separator = 255 * np.ones((h, 10, 3), dtype=np.uint8)
-        combined = np.concatenate((orig_resized, separator, blended_resized), axis=1)
+    # Prepare for download
+    seg_pil = Image.fromarray(blended)
+    buf = io.BytesIO()
+    seg_pil.save(buf, format="PNG")
+    byte_im = buf.getvalue()
 
-        # Convert to bytes for download
-        combined_pil = Image.fromarray(combined)
-        buf = io.BytesIO()
-        combined_pil.save(buf, format="PNG")
-        byte_im = buf.getvalue()
-
-        # Download button
-        st.download_button(
-            label="📥 Download Side-by-Side Result",
-            data=byte_im,
-            file_name="lung_nodule_segmentation_side_by_side.png",
-            mime="image/png",
-            use_container_width=True
-        )
+    st.download_button(
+        label="📥 Download Segmentation Result",
+        data=byte_im,
+        file_name="lung_nodule_segmentation.png",
+        mime="image/png",
+        use_container_width=True
+    )

@@ -23,7 +23,7 @@ with col2:
     st.title("i3L AI-based Lung Nodule Segmentation")
 
 # Streamlit UI
-# st.title("Lung Nodule Segmentation")
+st.title("Lung Nodule Segmentation")
 
 uploaded_file = st.file_uploader("Upload an Image", 
     type=['png', 'jpg', 'jpeg'])
@@ -47,5 +47,5 @@ if uploaded_file:
         # Show result
         st.image(seg_img, 
             caption="Segmentation Result", 
-            use_container_width=True)
+            use_container_width=False)
 

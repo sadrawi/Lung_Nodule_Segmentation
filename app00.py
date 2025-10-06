@@ -45,10 +45,10 @@ if uploaded_file:
 
     # Run segmentation when button clicked
     if run_clicked:
-        with st.spinner("Running segmentation..."):
-            img_np = np.array(image2)
-            results = model.predict(img_np, verbose=False)[0]
-            seg_img = results.plot()
+    
+        img_np = np.array(image2)
+        results = model.predict(img_np, verbose=False)[0]
+        seg_img = results.plot()
 
         # Display segmentation result beside original
         seg_img_placeholder.image(seg_img, caption="Segmentation Result", use_container_width=True)

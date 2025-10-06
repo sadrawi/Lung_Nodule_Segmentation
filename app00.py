@@ -48,10 +48,10 @@ if uploaded_file:
         seg_img = results.plot()  # returns a numpy array with the segmentation mask overlaid
 
         # Show result
-        with col22:
-            # st.title("i3L AI-based Lung Nodule Segmentation")
+    with col22:
+        # st.title("i3L AI-based Lung Nodule Segmentation")
 
-            st.image(seg_img, 
-                caption="Segmentation Result", 
-                use_column_width=True)
+        st.image(seg_img, 
+            caption="Segmentation Result", 
+            use_column_width=True)
 

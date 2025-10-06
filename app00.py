@@ -24,58 +24,61 @@ with col2:
 
 st.header("Lung Nodule Segmentation")
 
-# Upload UI
 uploaded_file = st.file_uploader("Upload a Chest Image", type=['png', 'jpg', 'jpeg'])
 
-# Initialize session state to store results
-if "seg_result" not in st.session_state:
-    st.session_state.seg_result = None
+# Keep state for reusing segmentation result
+if "seg_mask" not in st.session_state:
+    st.session_state.seg_mask = None
     st.session_state.orig_image = None
 
 if uploaded_file:
     image2 = Image.open(uploaded_file).convert("RGB")
 
-    # Run button
     st.markdown("<hr>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
     with col_btn2:
         run_clicked = st.button("🔍 Run Segmentation", use_container_width=True)
 
-    # Run YOLO segmentation
     if run_clicked:
         with st.spinner("Running segmentation..."):
             img_np = np.array(image2)
             results = model.predict(img_np, verbose=False)[0]
-            seg_img = results.plot()
-            seg_img = cv2.cvtColor(seg_img, cv2.COLOR_BGR2RGB)
 
-        # Store both original and result for blending
-        st.session_state.seg_result = seg_img
-        st.session_state.orig_image = np.array(image2)
+            # Create an empty mask (same size as input)
+            mask = np.zeros_like(img_np, dtype=np.uint8)
+
+            # Loop through detected masks
+            if results.masks is not None:
+                for m in results.masks.data:
+                    m = m.cpu().numpy()
+                    m = (m * 255).astype(np.uint8)
+                    m = cv2.resize(m, (img_np.shape[1], img_np.shape[0]))
+                    mask[m > 128] = (0, 255, 0)  # green overlay for segmentation
+
+            st.session_state.seg_mask = mask
+            st.session_state.orig_image = img_np
 
         st.success("✅ Segmentation complete! Adjust transparency below.")
 
-    # If segmentation already exists
-    if st.session_state.seg_result is not None:
+    # If segmentation mask exists
+    if st.session_state.seg_mask is not None:
         st.markdown("### 🩶 Adjust Segmentation Transparency")
         alpha = st.slider("Transparency", 0.0, 1.0, 0.5, 0.05)
 
-        # Blend mask with original (for adjustable visibility)
+        # Blend original and mask (no text or confidence shown)
         blended = cv2.addWeighted(
-            st.session_state.orig_image, 1 - alpha,
-            st.session_state.seg_result, alpha, 0
+            st.session_state.orig_image, 1.0,
+            st.session_state.seg_mask, alpha, 0
         )
 
-        # Show result only
         st.image(blended, caption=f"Segmentation Result (Transparency: {alpha:.2f})", use_container_width=True)
 
-        # Convert to bytes for download
+        # Prepare image for download
         seg_pil = Image.fromarray(blended)
         buf = io.BytesIO()
         seg_pil.save(buf, format="PNG")
         byte_im = buf.getvalue()
 
-        # Download button
         st.download_button(
             label="📥 Download Segmentation Result",
             data=byte_im,

@@ -20,7 +20,7 @@ col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
     st.image(image, use_container_width=True)
 
-col1, col2, col3 = st.columns([1, 2, 1])
+col1, col2, col3 = st.columns([1, 4, 1])
 with col2:
     st.title("i3L AI-based Lung Nodule Segmentation")
 # st.header("Lung Nodule Segmentation")

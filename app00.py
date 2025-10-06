@@ -24,10 +24,10 @@ with col2:
 
 st.header("Lung Nodule Segmentation")
 
-# Upload UI
-uploaded_file = st.file_uploader("Upload a Chest Image", type=['png', 'jpg', 'jpeg'])
+# File upload
+uploaded_file = st.file_uploader("Upload an Image", type=['png', 'jpg', 'jpeg'])
 
-# Initialize session state to store results
+# Store results in session state so we don't re-run the model unnecessarily
 if "seg_result" not in st.session_state:
     st.session_state.seg_result = None
     st.session_state.orig_image = None
@@ -35,7 +35,14 @@ if "seg_result" not in st.session_state:
 if uploaded_file:
     image2 = Image.open(uploaded_file).convert("RGB")
 
-    # Run button
+    col1, col2 = st.columns(2)
+    with col1:
+        st.image(image2, caption="Original Image", use_container_width=True)
+
+    with col2:
+        seg_img_placeholder = st.empty()
+
+    # Button to run segmentation
     st.markdown("<hr>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
     with col_btn2:
@@ -49,25 +56,24 @@ if uploaded_file:
             seg_img = results.plot()
             seg_img = cv2.cvtColor(seg_img, cv2.COLOR_BGR2RGB)
 
-        # Store both original and result for blending
+        # Save both to session state
         st.session_state.seg_result = seg_img
         st.session_state.orig_image = np.array(image2)
 
         st.success("✅ Segmentation complete! Adjust transparency below.")
 
-    # If segmentation already exists
+    # If segmentation result exists, show slider + overlay
     if st.session_state.seg_result is not None:
         st.markdown("### 🩶 Adjust Segmentation Transparency")
         alpha = st.slider("Transparency", 0.0, 1.0, 0.5, 0.05)
 
-        # Blend mask with original (for adjustable visibility)
+        # Blend dynamically
         blended = cv2.addWeighted(
             st.session_state.orig_image, 1 - alpha,
             st.session_state.seg_result, alpha, 0
         )
 
-        # Show result only
-        st.image(blended, caption=f"Segmentation Result (Transparency: {alpha:.2f})", use_container_width=True)
+        seg_img_placeholder.image(blended, caption=f"Segmentation Result (Transparency: {alpha:.2f})", use_container_width=True)
 
         # Convert to bytes for download
         seg_pil = Image.fromarray(blended)

@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 from ultralytics import YOLO
+import io
 
 # Load YOLOv8 segmentation model
 model = YOLO('best_seg_LungNodule.pt')
@@ -52,3 +53,18 @@ if uploaded_file:
 
         # Display segmentation result beside original
         seg_img_placeholder.image(seg_img, caption="Segmentation Result", use_container_width=True)
+
+        # Convert segmentation result to bytes for download
+        seg_pil = Image.fromarray(seg_img)
+        buf = io.BytesIO()
+        seg_pil.save(buf, format="PNG")
+        byte_im = buf.getvalue()
+
+        # Download button
+        st.download_button(
+            label="📥 Download Segmentation Result",
+            data=byte_im,
+            file_name="lung_nodule_segmentation.png",
+            mime="image/png",
+            use_container_width=True
+        )

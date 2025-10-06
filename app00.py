@@ -4,8 +4,8 @@ import numpy as np
 import cv2
 from ultralytics import YOLO
 import tempfile
-# Load YOLOv8 segmentation model
 
+# Load YOLOv8 segmentation model
 model = YOLO('best_seg_LungNodule.pt')
 
 st.set_page_config(
@@ -14,44 +14,37 @@ st.set_page_config(
     initial_sidebar_state="auto"
 )
 
+# Logo
 image = Image.open('i3l_logo.png')
 
 col1, col2 = st.columns([1,3])
 with col1:
-    st.image(image)
+    st.image(image, use_container_width=True)
 with col2:
     st.title("i3L AI-based Lung Nodule Segmentation")
 
 # Streamlit UI
 st.title("Lung Nodule Segmentation")
 
-uploaded_file = st.file_uploader("Upload an Image", 
-    type=['png', 'jpg', 'jpeg'])
+uploaded_file = st.file_uploader("Upload an Image", type=['png', 'jpg', 'jpeg'])
 
 if uploaded_file:
     image2 = Image.open(uploaded_file).convert("RGB")
 
     col12, col22 = st.columns([1,3])
     with col12:
-        st.image(image2, 
-            caption="Uploaded Image", 
-            use_container_width=True)
+        st.image(image2, caption="Uploaded Image", use_container_width=True)
 
-    if st.button("Run Segmentation"):
-        # Convert to numpy array
-        img_np = np.array(image)
-
-        # Run prediction
-        results = model.predict(img_np)[0]
-
-        # Visualize the mask overlay
-        seg_img = results.plot()  # returns a numpy array with the segmentation mask overlaid
-
-        # Show result
     with col22:
-        # st.title("i3L AI-based Lung Nodule Segmentation")
+        if st.button("Run Segmentation"):
+            # Convert uploaded image to numpy array
+            img_np = np.array(image2)
 
-        st.image(seg_img, 
-            caption="Segmentation Result", 
-            use_column_width=True)
+            # Run prediction
+            results = model.predict(img_np)[0]
 
+            # Visualize the mask overlay
+            seg_img = results.plot()  # numpy array with segmentation overlay
+
+            # Display segmentation result
+            st.image(seg_img, caption="Segmentation Result", use_container_width=True)

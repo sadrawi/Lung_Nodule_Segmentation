@@ -29,7 +29,13 @@ uploaded_file = st.file_uploader("Upload an Image",
     type=['png', 'jpg', 'jpeg'])
 
 if uploaded_file:
-    image = Image.open(uploaded_file).convert("RGB")
+    image2 = Image.open(uploaded_file).convert("RGB")
+
+    col1, col2 = st.columns([1,3])
+    with col1:
+        st.image(image2)
+    
+
     st.image(image, 
         caption="Uploaded Image", 
         use_container_width=True)
@@ -45,7 +51,10 @@ if uploaded_file:
         seg_img = results.plot()  # returns a numpy array with the segmentation mask overlaid
 
         # Show result
-        st.image(seg_img, 
-            caption="Segmentation Result", 
-            use_column_width=True)
+        with col2:
+            # st.title("i3L AI-based Lung Nodule Segmentation")
+
+            st.image(seg_img, 
+                caption="Segmentation Result", 
+                use_column_width=True)
 

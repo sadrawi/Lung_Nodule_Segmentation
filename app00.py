@@ -14,35 +14,41 @@ st.set_page_config(
 
 # Logo + Title
 image = Image.open('i3l_logo.png')
-col1, col2 = st.columns([1,3])
+col1, col2 = st.columns([1, 3])
 with col1:
     st.image(image, use_container_width=True)
 with col2:
     st.title("i3L AI-based Lung Nodule Segmentation")
 
-# Upload UI
 st.header("Lung Nodule Segmentation")
+
+# Upload UI
 uploaded_file = st.file_uploader("Upload an Image", type=['png', 'jpg', 'jpeg'])
 
 if uploaded_file:
     image2 = Image.open(uploaded_file).convert("RGB")
 
-    # Create two equal-width columns for images
+    # Placeholder for results
     col1, col2 = st.columns(2)
 
     with col1:
         st.image(image2, caption="Original Image", use_container_width=True)
 
     with col2:
-        if st.button("Run Segmentation"):
-            # Convert to numpy array
+        seg_img_placeholder = st.empty()  # reserve space for result later
+
+    # Centered "Run Segmentation" button
+    st.markdown("<hr>", unsafe_allow_html=True)
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+    with col_btn2:
+        run_clicked = st.button("🔍 Run Segmentation", use_container_width=True)
+
+    # Run segmentation when button clicked
+    if run_clicked:
+        with st.spinner("Running segmentation..."):
             img_np = np.array(image2)
-
-            # Run YOLO segmentation
             results = model.predict(img_np, verbose=False)[0]
-
-            # Overlay mask on image
             seg_img = results.plot()
 
-            # Display side by side
-            st.image(seg_img, caption="Segmentation Result", use_container_width=True)
+        # Display segmentation result beside original
+        seg_img_placeholder.image(seg_img, caption="Segmentation Result", use_container_width=True)

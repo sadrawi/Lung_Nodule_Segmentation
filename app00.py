@@ -17,7 +17,8 @@ st.set_page_config(
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    st.image("i3LUniversity.png", width=150)
+    st.image("i3LUniversity.png", 
+             use_container_width=True)
 
 
 st.markdown(

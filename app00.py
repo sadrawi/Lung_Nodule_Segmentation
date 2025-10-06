@@ -47,5 +47,5 @@ if uploaded_file:
         # Show result
         st.image(seg_img, 
             caption="Segmentation Result", 
-            width=200)
+            use_column_width='always')
 

@@ -21,11 +21,11 @@ with col2:
     st.image(image, use_container_width=True)
 
 
-st.markdown("<hr>", unsafe_allow_html=True)
-# col1, col2, col3 = st.columns([1, 1, 1])
-# with col2:
-st.title("AI-based Lung Nodule Segmentation")
-# st.header("Lung Nodule Segmentation")
+st.markdown(
+    "<h1 style='text-align: center;'>AI-based Lung Nodule Segmentation</h1>",
+    unsafe_allow_html=True
+)
+
 
 # File upload
 uploaded_file = st.file_uploader("Upload an Image", type=['png', 'jpg', 'jpeg'])

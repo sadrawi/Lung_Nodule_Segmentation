@@ -16,11 +16,10 @@ st.set_page_config(
 
 # Logo + Title
 image = Image.open('i3LUniversity.png')
-col1, col2 = st.columns([1, 3])
+col1, col2 = st.columns([3, 1])
 with col1:
     st.image(image, use_container_width=True)
-with col2:
-    st.title("i3L AI-based Lung Nodule Segmentation")
+
 
 st.header("Lung Nodule Segmentation")
 

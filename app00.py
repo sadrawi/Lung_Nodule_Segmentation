@@ -14,11 +14,15 @@ st.set_page_config(
     initial_sidebar_state="auto"
 )
 
-# Logo + Title
-image = Image.open('i3LUniversity.png')
-col1, col2, col3 = st.columns([1, 1, 1])
-with col2:
-    st.image(image, use_container_width=True)
+
+st.markdown(
+    """
+    <div style='text-align: center;'>
+        <img src='i3LUniversity.png' width='200'>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
 st.markdown(

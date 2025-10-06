@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 # Logo + Title
-image = Image.open('i3l_logo.png')
+image = Image.open('i3LUniversity.png')
 col1, col2 = st.columns([1, 3])
 with col1:
     st.image(image, use_container_width=True)
@@ -71,7 +71,6 @@ if uploaded_file:
 
     # Show transparency slider and side-by-side results
     if st.session_state.seg_result is not None:
-        st.markdown("### 🩶 Adjust Segmentation Transparency")
         alpha = st.slider("Transparency", 0.0, 1.0, 0.5, 0.05)
 
         blended = cv2.addWeighted(

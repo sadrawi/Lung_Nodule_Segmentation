@@ -43,8 +43,9 @@ if uploaded_file:
     with col2:
         seg_img_placeholder = st.empty()
         if st.session_state.seg_result is None:
+            placeholder_img = np.ones((200, 200, 3), dtype=np.uint8) * 230
             seg_img_placeholder.image(
-                np.ones((200, 200, 3), dtype=np.uint8) * 230, 
+                placeholder_img, 
                 caption="Segmentation result will appear here after running the model.", 
                 use_container_width=True
             )
@@ -82,15 +83,22 @@ if uploaded_file:
             use_container_width=True
         )
 
-        # Create a side-by-side combined image for download
-        combined = np.hstack((st.session_state.orig_image, blended))
+        # Create a separator line (vertical)
+        h = st.session_state.orig_image.shape[0]
+        separator = np.ones((h, 10, 3), dtype=np.uint8) * 255  # white line (10px wide)
+
+        # Combine side by side with separator
+        combined = np.hstack((st.session_state.orig_image, separator, blended))
+
+        # Convert to PIL for download
         combined_pil = Image.fromarray(combined)
         buf = io.BytesIO()
         combined_pil.save(buf, format="PNG")
         byte_im = buf.getvalue()
 
+        # Download button
         st.download_button(
-            label="📥 Download Side-by-Side Result",
+            label="📥 Download Side-by-Side Result (with Separator)",
             data=byte_im,
             file_name="lung_nodule_segmentation_side_by_side.png",
             mime="image/png",

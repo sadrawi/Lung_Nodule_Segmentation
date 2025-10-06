@@ -16,8 +16,8 @@ st.set_page_config(
 
 # Logo + Title
 image = Image.open('i3LUniversity.png')
-col1, col2 = st.columns([3, 1])
-with col1:
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
     st.image(image, use_container_width=True)
 
 

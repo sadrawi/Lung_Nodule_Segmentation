@@ -39,7 +39,9 @@ if uploaded_file:
     # Create side-by-side columns
     col1, col2 = st.columns(2)
     with col1:
-        st.image(st.session_state.orig_image, caption="Original Image", use_container_width=True)
+        st.image(st.session_state.orig_image, 
+                 caption="Original Image", 
+                 use_container_width=True)
     with col2:
         seg_img_placeholder = st.empty()
         if st.session_state.seg_result is None:
@@ -54,7 +56,8 @@ if uploaded_file:
     st.markdown("<hr>", unsafe_allow_html=True)
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
     with col_btn2:
-        run_clicked = st.button("🔍 Run Segmentation", use_container_width=True)
+        run_clicked = st.button("Run Segmentation", 
+                                use_container_width=True)
 
     # Run YOLO segmentation
     if run_clicked:
@@ -85,7 +88,7 @@ if uploaded_file:
 
         # Create a separator line (vertical)
         h = st.session_state.orig_image.shape[0]
-        separator = np.ones((h, 10, 3), dtype=np.uint8) * 255  # white line (10px wide)
+        separator = np.ones((h, 10, 3), dtype=np.uint8) * 128  # white line (10px wide)
 
         # Combine side by side with separator
         combined = np.hstack((st.session_state.orig_image, separator, blended))
@@ -98,9 +101,9 @@ if uploaded_file:
 
         # Download button
         st.download_button(
-            label="📥 Download Side-by-Side Result (with Separator)",
+            label="Download Side-by-Side Result",
             data=byte_im,
-            file_name="lung_nodule_segmentation_side_by_side.png",
+            file_name="lung_nodule_segmentation.png",
             mime="image/png",
             use_container_width=True
         )
